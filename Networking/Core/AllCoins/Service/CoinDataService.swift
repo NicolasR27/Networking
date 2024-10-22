@@ -12,13 +12,15 @@ class CoinDataService {
     private let urlString =
     "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=38&page=1&sparkline=false&price_change_percentage=24h&locale=en"
 
+
+
+
     func fetchCoins() async throws -> [Coin] {
         guard let url = URL(string: urlString) else { return [] }
-        let (data,response) = try await URLSession.shared.data(from: url)
+        let (data, response) = try await URLSession.shared.data(from: url)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw CoinAPIError.requestFailed(description: "Request Failed")
-
         }
 
         guard httpResponse.statusCode == 200 else {
@@ -26,11 +28,30 @@ class CoinDataService {
         }
 
         do {
-        let coins = try JSONDecoder().decode([Coin].self, from: data)
+            let coins = try JSONDecoder().decode([Coin].self, from: data)
             return coins
         } catch let error {
             print("DEBUG: Error \(error)")
             throw error as? CoinAPIError ?? .unknownError(error: error)
+        }
+    }
+
+    func fetchCoinDetails(id: String) async throws -> CoinDetails? {
+        let urlString = "https://api.coingecko.com/api/v3/coins/\(id)?localization=false"
+        guard let url = URL(string: urlString) else { return nil }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw CoinAPIError.invalidStatusCode(statusCode: (response as? HTTPURLResponse)?.statusCode ?? 0)
+        }
+        
+        do {
+            let details = try JSONDecoder().decode(CoinDetails.self, from: data)
+            return details
+        } catch let error {
+            print("DEBUG: Error decoding coin details: \(error)")
+            throw CoinAPIError.JSONParsingFailure
         }
     }
 
@@ -82,7 +103,6 @@ class CoinDataService {
                 return
             }
 
-            // Remove this print if you are seeing double logs
             for coin in coins {
                 print("DEBUG: \(coin.name)")
             }

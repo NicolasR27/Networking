@@ -12,6 +12,7 @@ class CoinsViewModel: ObservableObject {
     @Published var coins = [Coin]()
     @Published var errorMessage: String?
 
+   
     private let service = CoinDataService()
 
     init() {
