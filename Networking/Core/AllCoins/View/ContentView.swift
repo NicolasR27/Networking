@@ -7,7 +7,15 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var viewModel = CoinsViewModel()
+
+    private let serivce: CoinDataService
+    @StateObject var viewModel: CoinsViewModel
+
+    init(service:CoinDataService) {
+        self.serivce = service
+        self._viewModel = StateObject(wrappedValue:CoinsViewModel(service: service))
+
+    }
 
     var body: some View {
         NavigationStack {
@@ -30,7 +38,7 @@ struct ContentView: View {
                 }
             }
             .navigationDestination(for: Coin.self) { coin in
-                CoinDetailsView(coin: coin)
+                CoinDetailsView(coin: coin,service: serivce)
             }
             .overlay {
                 if let error = viewModel.errorMessage {
@@ -47,5 +55,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(service: CoinDataService())
 }
