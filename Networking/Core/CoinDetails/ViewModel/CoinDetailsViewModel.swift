@@ -23,9 +23,8 @@ class CoinDetailsViewModel: ObservableObject {
     @MainActor
     func fetchCoinDetails() async {
         do {
-            let details = try await service.fetchCoinDetails(id: coinId)
-            self.coinDetails = details // Assign to the published property
-            print("DEBUG: Fetched coin details: \(details)")
+            self.coinDetails = try await service.fetchCoinDetails(id: coinId)
+          
         } catch {
             print("DEBUG: Error fetching coin details: \(error.localizedDescription)")
         }
