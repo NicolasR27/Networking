@@ -4,17 +4,17 @@
 //
 //  Created by Nicolas Rios on 10/19/24.
 //
+
 import SwiftUI
 
 struct ContentView: View {
 
-    private let serivce: CoinDataService
-    @StateObject var viewModel: CoinsViewModel
+    private let service: CoinDataService
+    @StateObject private var viewModel: CoinsViewModel
 
-    init(service:CoinDataService) {
-        self.serivce = service
-        self._viewModel = StateObject(wrappedValue:CoinsViewModel(service: service))
-
+    init(service: CoinDataService) {
+        self.service = service
+        self._viewModel = StateObject(wrappedValue: CoinsViewModel(service: service))
     }
 
     var body: some View {
@@ -38,7 +38,9 @@ struct ContentView: View {
                 }
             }
             .navigationDestination(for: Coin.self) { coin in
-                CoinDetailsView(coin: coin,service: serivce)
+                // Create the CoinDetailsViewModel and pass it to CoinDetailsView
+                let coinDetailsViewModel = CoinDetailsViewModel(coinId: coin.id, service: service)
+                CoinDetailsView(coin: coin, viewmodel: coinDetailsViewModel)
             }
             .overlay {
                 if let error = viewModel.errorMessage {

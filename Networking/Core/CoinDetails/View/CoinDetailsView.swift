@@ -12,10 +12,9 @@ struct CoinDetailsView: View {
     let coin: Coin
     @ObservedObject var viewmodel: CoinDetailsViewModel
 
-
-    init(coin: Coin,service: CoinDataService) {
+    init(coin: Coin, viewmodel: CoinDetailsViewModel) {
         self.coin = coin
-        self.viewmodel = CoinDetailsViewModel(coinId: coin.id,service: service)
+        self.viewmodel = viewmodel
     }
 
     var body: some View {
@@ -33,11 +32,9 @@ struct CoinDetailsView: View {
                     .padding(.vertical)
             }
         }
-        .task{
+        .task {
             await viewmodel.fetchCoinDetails()
         }
-
         .padding()
-
     }
 }

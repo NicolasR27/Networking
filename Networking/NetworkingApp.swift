@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct NetworkingApp: App {
+//    @StateObject var viewmodel = CoinsViewModel(service: CoinDataService())
     var body: some Scene {
         WindowGroup {
             ContentView(service: CoinDataService())
+//                .environmentObject(viewmodel)
         }
     }
 }

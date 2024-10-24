@@ -29,7 +29,6 @@ class CoinDataService: HTTDataDownloader {
 
         let details = try await fetchData(as: CoinDetails.self, endpoint: enpoint)
         CoinDetailsCache.shared.set(details, forKey: id)
-
         return details
 
     }
