@@ -12,7 +12,7 @@ struct NetworkingApp: App {
 //    @StateObject var viewmodel = CoinsViewModel(service: CoinDataService())
     var body: some Scene {
         WindowGroup {
-            ContentView(service: CoinDataService())
+            ContentView(service: MockCoinService())
 //                .environmentObject(viewmodel)
         }
     }

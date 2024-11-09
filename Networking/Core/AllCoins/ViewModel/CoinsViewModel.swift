@@ -11,10 +11,11 @@ class CoinsViewModel: ObservableObject {
 
     @Published var coins = [Coin]()
     @Published var errorMessage: String?
+    @Published var coinDetails: CoinDetails?  // Singular: coinDetails
 
-    private let service: CoinDataService
+    private let service: CoinServiceProtocol
 
-    init(service :CoinDataService) {
+    init(service: CoinServiceProtocol) {
         self.service = service
         Task { await fetchCoins() }
     }
@@ -23,23 +24,19 @@ class CoinsViewModel: ObservableObject {
     func fetchCoins() async {
         do {
             self.coins = try await service.fetchCoins()
-        } catch{
-            guard let error = error as? CoinAPIError else {return}
+        } catch {
+            guard let error = error as? CoinAPIError else { return }
             self.errorMessage = error.customdescription
-
         }
     }
 
-    func fetchCoinsWithCompletionHandler() {
-        service.fetchCoinsWithResult { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                    case.success(let coins):
-                        self?.coins = coins
-                    case.failure(let error):
-                        self?.errorMessage = error.localizedDescription
-                }
-            }
+    @MainActor
+    func fetchCoinDetails(coinid: String) async {
+        do {
+            self.coinDetails = try await service.fetchCoinDetails(id: coinid)  // Corrected to coinDetails
+        } catch {
+            guard let error = error as? CoinAPIError else { return }
+            self.errorMessage = error.customdescription
         }
     }
 }

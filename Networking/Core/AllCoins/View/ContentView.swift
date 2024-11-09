@@ -1,20 +1,13 @@
-//
-//  ContentView.swift
-//  Networking
-//
-//  Created by Nicolas Rios on 10/19/24.
-//
-
 import SwiftUI
 
 struct ContentView: View {
 
-    private let service: CoinDataService
+    private let service: CoinServiceProtocol
     @StateObject private var viewModel: CoinsViewModel
 
-    init(service: CoinDataService) {
+    init(service: CoinServiceProtocol) {
         self.service = service
-        self._viewModel = StateObject(wrappedValue: CoinsViewModel(service: service))
+        self._viewModel = StateObject(wrappedValue: CoinsViewModel(service: service)) // Pass the service instance
     }
 
     var body: some View {
@@ -40,7 +33,7 @@ struct ContentView: View {
             .navigationDestination(for: Coin.self) { coin in
                 // Create the CoinDetailsViewModel and pass it to CoinDetailsView
                 let coinDetailsViewModel = CoinDetailsViewModel(coinId: coin.id, service: service)
-                CoinDetailsView(coin: coin, viewmodel: coinDetailsViewModel)
+              
             }
             .overlay {
                 if let error = viewModel.errorMessage {
